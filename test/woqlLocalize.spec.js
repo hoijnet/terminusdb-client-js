@@ -26,8 +26,8 @@ describe('WOQL localize() JSON structure (unit tests)', function() {
     expect(result.and[1]['@type']).to.equal('Select');
     expect(Array.isArray(result.and[1].variables)).to.be.true;
     
-    // CRITICAL: select("") creates variables:[""] to hide all local variables
-    expect(result.and[1].variables).to.deep.equal(['']);
+    // CRITICAL: select() creates empty variables array to hide all local variables
+    expect(result.and[1].variables).to.deep.equal([]);
   });
 
   it('should bind outer parameters via eq() clauses', () => {
@@ -43,7 +43,7 @@ describe('WOQL localize() JSON structure (unit tests)', function() {
 
     const result = query.json();
     
-    // NEW STRUCTURE: eq(var,var) + eq(unique,var) + select("")
+    // NEW STRUCTURE: eq(var,var) + eq(unique,var) + select()
     // This ensures outer parameters are visible in results
     expect(result['@type']).to.equal('And');
     const andClauses = result.and;
@@ -57,9 +57,9 @@ describe('WOQL localize() JSON structure (unit tests)', function() {
     // Fourth: eq(param2_unique, 'v:input2') - links to outer
     expect(andClauses[3]['@type']).to.equal('Equals');
     
-    // Fifth should be the select("") wrapper
+    // Fifth should be the select() wrapper with empty variables
     expect(andClauses[4]['@type']).to.equal('Select');
-    expect(andClauses[4].variables).to.deep.equal(['']);
+    expect(andClauses[4].variables).to.deep.equal([]);
     
     // Inside select("") should be the actual query
     expect(andClauses[4].query['@type']).to.equal('Triple');
@@ -89,9 +89,9 @@ describe('WOQL localize() JSON structure (unit tests)', function() {
     // Second: eq(x_unique, 'v:external_x') - links to outer
     expect(andClauses[1]['@type']).to.equal('Equals');
     
-    // Third should be Select with variables:[""]
+    // Third should be Select with empty variables array
     expect(andClauses[2]['@type']).to.equal('Select');
-    expect(andClauses[2].variables).to.deep.equal(['']);
+    expect(andClauses[2].variables).to.deep.equal([]);
   });
 
   it('should work in fluent mode', () => {
@@ -116,9 +116,9 @@ describe('WOQL localize() JSON structure (unit tests)', function() {
     expect(andClauses[2]['@type']).to.equal('Equals');
     expect(andClauses[3]['@type']).to.equal('Equals');
     
-    // Fifth should be Select with variables:[""]
+    // Fifth should be Select with empty variables array
     expect(andClauses[4]['@type']).to.equal('Select');
-    expect(andClauses[4].variables).to.deep.equal(['']);
+    expect(andClauses[4].variables).to.deep.equal([]);
   });
 
   it('should generate unique variable names', () => {
@@ -146,7 +146,7 @@ describe('WOQL localize() JSON structure (unit tests)', function() {
 
     const result = query.json();
     expect(result['@type']).to.equal('Select');
-    expect(result.variables).to.deep.equal(['']);
+    expect(result.variables).to.deep.equal([]);
     
     // Query should be directly the triple (no eq bindings needed)
     expect(result.query['@type']).to.equal('Triple');
@@ -187,7 +187,7 @@ describe('WOQL localize() JSON structure (unit tests)', function() {
 
     const result = query.json();
     expect(result['@type']).to.equal('Select');
-    expect(result.variables).to.deep.equal(['']);
+    expect(result.variables).to.deep.equal([]);
     
     // No eq bindings, just the query
     expect(result.query['@type']).to.equal('Triple');
